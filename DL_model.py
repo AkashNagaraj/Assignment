@@ -8,7 +8,7 @@ import tqdm
 import gensim.downloader as api
 glove_model = api.load("glove-wiki-gigaword-100")
 
-
+# Build a neural network with two hidden layers
 class Multiclass(nn.Module):
     def __init__(self):
         super().__init__()
@@ -24,16 +24,17 @@ class Multiclass(nn.Module):
         return x
 
 
+# Train the neural network
 def train(X,y,batch_size):
 
     #batch_size = 8
     X_train = X[:len(X)//batch_size*batch_size]
     y_train = y[:len(y)//batch_size*batch_size]
 
-    n_epochs = 50  
+    n_epochs = 10  
     model = Multiclass()
     
-    optimizer = optim.Adam(model.parameters(),lr=0.005)
+    optimizer = optim.Adam(model.parameters(),lr=0.001)
     loss = nn.CrossEntropyLoss()
 
     for epoch in range(n_epochs):
@@ -55,14 +56,14 @@ def train(X,y,batch_size):
     print("Accuracy is :",sum(y[i+batch_size:]==valid.argmax(1))/batch_size)
 
 
+# The function that is called from the jupyte-notebook
 def implement_pytorch(X,y,batch_size):
     X = torch.tensor(X,requires_grad=True)
     X = X.float()
     y = torch.from_numpy(y)
     train(X,y,batch_size)
 
-## Implementing with GloVe 
-
+## The below is the incomplete code to implement RNN with GloVe 
 
 class RNN(nn.Module):
     def __init__(self, input_dim, embedding_dim, hidden_dim, output_dim):
@@ -107,7 +108,6 @@ def implement_with_GloVe(df, INPUT_DIM, EMBEDDING_DIM, HIDDEN_DIM, OUTPUT_DIM, b
         
         preds = model(input_glove_data)
         print("The RNN prediction is :",preds)
-        sys.exit()
 
         y_pred = model(X_batch)
         output = loss(y_pred, y_batch)
@@ -116,6 +116,7 @@ def implement_with_GloVe(df, INPUT_DIM, EMBEDDING_DIM, HIDDEN_DIM, OUTPUT_DIM, b
         optimizer.step()
 
 
+# This function passes dummy data to check if the model architectures are correct
 def main():
     """
     X = np.random.rand(100,50)
